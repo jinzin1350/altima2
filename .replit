@@ -5,7 +5,7 @@ PATH = "/home/runner/$REPL_SLUG/.config/npm/node_global/bin:/home/runner/$REPL_S
 npm_config_prefix = "/home/runner/$REPL_SLUG/.config/npm/node_global"
 
 [nix]
-channel = "stable-23_11"
+channel = "stable-24_05"
 
 [deployment]
 run = ["sh", "-c", "npm start"]
