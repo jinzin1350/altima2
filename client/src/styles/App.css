@@ -318,10 +318,11 @@ body {
 }
 
 .chatbox-welcome {
-  padding: 2.5rem 2rem 1.5rem;
+  padding: 2rem 2rem 1.5rem;
   text-align: center;
   border-bottom: 1px solid var(--border-color);
   background: linear-gradient(180deg, rgba(99, 102, 241, 0.1) 0%, transparent 100%);
+  flex-shrink: 0;
 }
 
 .chatbox-title {
@@ -344,6 +345,10 @@ body {
   max-width: 1200px;
   margin: 0 auto;
   width: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  flex: 1;
+  min-height: 0;
 }
 
 .quick-questions-title {
@@ -578,6 +583,7 @@ body {
   display: flex;
   gap: 1rem;
   align-items: center;
+  flex-shrink: 0;
 }
 
 .chat-input {
