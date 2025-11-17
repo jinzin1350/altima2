@@ -70,16 +70,18 @@ function ChatBox() {
   };
 
   return (
-    <div className="chatbox">
-      <div className="chatbox-header">
-        <h2 className="section-title">AI Chat Assistant</h2>
-        <p className="chatbox-subtitle">Ask questions about your network alerts</p>
+    <div className="chatbox-fullscreen">
+      <div className="chatbox-welcome">
+        <h2 className="chatbox-title">Ask me anything about your network alerts</h2>
+        <p className="chatbox-subtitle">I can analyze patterns, answer questions, and provide insights</p>
       </div>
 
       {/* Quick Questions */}
       {messages.length === 0 && (
-        <div className="quick-questions">
-          <h3 className="subsection-title">Quick Questions</h3>
+        <div className="quick-questions-grid"
+
+>
+          <h3 className="quick-questions-title">Quick Questions</h3>
           {suggestions.map((category, idx) => (
             <div key={idx} className="question-category">
               <h4 className="category-title">{category.category}</h4>
