@@ -67,7 +67,7 @@ RETURNS TABLE (
   problem_id VARCHAR,
   host VARCHAR,
   description TEXT,
-  timestamp TIMESTAMPTZ,
+  alert_timestamp TIMESTAMPTZ,
   status VARCHAR,
   similarity FLOAT
 )
@@ -80,7 +80,7 @@ BEGIN
     alerts.problem_id,
     alerts.host,
     alerts.description,
-    alerts.timestamp,
+    alerts.timestamp AS alert_timestamp,
     alerts.status,
     1 - (alerts.embedding <=> query_embedding) AS similarity
   FROM alerts

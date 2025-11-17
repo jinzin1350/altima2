@@ -181,7 +181,11 @@ export async function searchAlertsByEmbedding(
     throw error;
   }
 
-  return data;
+  // Rename alert_timestamp back to timestamp for consistency
+  return data?.map(item => ({
+    ...item,
+    timestamp: item.alert_timestamp
+  })) || [];
 }
 
 /**
