@@ -34,7 +34,8 @@ body {
 /* App Layout */
 .app {
   display: flex;
-  min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
   background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
 }
 
@@ -52,7 +53,8 @@ body {
   top: 0;
   bottom: 0;
   z-index: 100;
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .sidebar.closed {
@@ -238,7 +240,8 @@ body {
   display: flex;
   flex-direction: column;
   transition: margin-left 0.3s ease;
-  min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
 }
 
 .sidebar.closed ~ .main-content {
@@ -296,15 +299,17 @@ body {
   flex: 1;
   padding: 2rem;
   overflow-y: auto;
+  overflow-x: hidden;
   display: flex;
   flex-direction: column;
+  height: calc(100vh - var(--header-height));
 }
 
 /* ChatBox Fullscreen */
 .chatbox-fullscreen {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - var(--header-height) - 4rem);
+  height: 100%;
   background: rgba(26, 31, 58, 0.4);
   border-radius: 20px;
   border: 1px solid var(--border-color);
