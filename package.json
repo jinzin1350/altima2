@@ -7,6 +7,7 @@
   "scripts": {
     "analyze": "node scripts/analyzeData.js",
     "setup": "node scripts/setupDatabase.js",
+    "embeddings": "node scripts/generateEmbeddings.js",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "server": "nodemon server/index.js",
     "client": "cd client && npm run dev",
