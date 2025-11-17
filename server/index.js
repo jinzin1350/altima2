@@ -1,3 +1,6 @@
+// Polyfill for Node.js 18 compatibility with Supabase
+import './polyfill.js';
+
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
