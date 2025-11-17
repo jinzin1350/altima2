@@ -56,7 +56,10 @@ CREATE INDEX IF NOT EXISTS alerts_embedding_idx
 ON alerts USING ivfflat (embedding vector_cosine_ops)
 WITH (lists = 100);
 
--- Step 7: Create vector search function
+-- Step 7: Drop existing function if it exists and create vector search function
+DROP FUNCTION IF EXISTS match_alerts(vector, double precision, integer);
+DROP FUNCTION IF EXISTS match_alerts(vector, float, integer);
+
 CREATE OR REPLACE FUNCTION match_alerts(
   query_embedding VECTOR(1536),
   match_threshold FLOAT,
