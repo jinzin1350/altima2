@@ -12,6 +12,13 @@ export default defineConfig({
       host: process.env.REPL_SLUG ? `${process.env.REPL_SLUG}.${process.env.REPL_OWNER}.repl.co` : 'localhost',
       clientPort: 443,
     },
+    allowedHosts: [
+      '.replit.dev',
+      '.repl.co',
+      '.picard.replit.dev',
+      '.kirk.replit.dev',
+      '.spock.replit.dev',
+    ],
     watch: {
       usePolling: true,
     },
