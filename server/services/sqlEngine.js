@@ -156,6 +156,18 @@ export async function formatSQLResults(question, results) {
     return `The answer is: ${value}`;
   }
 
+  // Limit results to avoid token limit (max 20 results)
+  const limitedResults = results.slice(0, 20);
+
+  // Remove large fields like description and embedding to reduce tokens
+  const cleanedResults = limitedResults.map(item => {
+    const { description, embedding, ...rest } = item;
+    return {
+      ...rest,
+      description: description ? description.substring(0, 100) + '...' : null
+    };
+  });
+
   // Format results as a table or list
   const messages = [
     {
@@ -166,8 +178,8 @@ export async function formatSQLResults(question, results) {
       role: 'user',
       content: `Question: ${question}
 
-Results:
-${JSON.stringify(results, null, 2)}
+Results (showing first ${cleanedResults.length} of ${results.length}):
+${JSON.stringify(cleanedResults, null, 2)}
 
 Please provide a clear, concise answer based on these results.`,
     },
@@ -178,8 +190,8 @@ Please provide a clear, concise answer based on these results.`,
     return response;
   } catch (error) {
     console.error('Error formatting results:', error);
-    // Fallback to JSON if formatting fails
-    return `Found ${results.length} results:\n${JSON.stringify(results, null, 2)}`;
+    // Fallback to simple summary
+    return `Found ${results.length} results. Top entries include: ${cleanedResults.slice(0, 5).map(r => r.host || r.problem_id).join(', ')}`;
   }
 }
 
