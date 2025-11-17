@@ -8,16 +8,18 @@ export default defineConfig({
     port: 5173,
     strictPort: false,
     hmr: {
+      protocol: 'wss',
+      host: process.env.REPL_SLUG ? `${process.env.REPL_SLUG}.${process.env.REPL_OWNER}.repl.co` : 'localhost',
       clientPort: 443,
     },
-    allowedHosts: [
-      '.replit.dev',
-      '.repl.co',
-    ],
+    watch: {
+      usePolling: true,
+    },
     proxy: {
       '/api': {
         target: 'http://localhost:3000',
         changeOrigin: true,
+        secure: false,
       },
     },
   },
