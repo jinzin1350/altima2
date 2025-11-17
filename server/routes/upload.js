@@ -117,7 +117,7 @@ router.post('/process', upload.array('files', 10), async (req, res) => {
         const alerts = parseHTMLAlerts(htmlContent);
         console.log(`Parsed ${alerts.length} alerts from ${file.originalname}`);
 
-        // Filter out duplicates and generate embeddings
+        // Filter out duplicates (skip embeddings for now - too slow)
         const newAlerts = [];
         let skipped = 0;
 
@@ -129,17 +129,13 @@ router.post('/process', upload.array('files', 10), async (req, res) => {
             continue;
           }
 
-          // Generate embedding for the alert
-          try {
-            const embedding = await generateAlertEmbedding(alert);
-            alert.embedding = embedding;
-            newAlerts.push(alert);
-          } catch (embeddingError) {
-            console.error('Error generating embedding:', embeddingError);
-            // Continue without embedding
-            newAlerts.push(alert);
-          }
+          // Add without embedding for fast upload
+          // Embeddings can be generated later if needed for RAG
+          alert.embedding = null;
+          newAlerts.push(alert);
         }
+
+        console.log(`${newAlerts.length} new alerts to insert (${skipped} skipped)`);
 
         // Insert new alerts in batches
         if (newAlerts.length > 0) {
