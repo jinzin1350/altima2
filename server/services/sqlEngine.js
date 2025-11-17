@@ -143,9 +143,10 @@ export async function executeSQLQuery(query) {
  * Format SQL results into natural language
  * @param {string} question - Original question
  * @param {Array} results - Query results
+ * @param {Array} history - Conversation history
  * @returns {Promise<string>} - Formatted response
  */
-export async function formatSQLResults(question, results) {
+export async function formatSQLResults(question, results, history = []) {
   if (!results || results.length === 0) {
     return "I couldn't find any results for that query.";
   }
@@ -198,20 +199,31 @@ Please provide a clear, concise answer based on these results.`,
 /**
  * Process a question using SQL approach
  * @param {string} question - User question
+ * @param {Array} history - Conversation history
  * @returns {Promise<Object>} - Response with answer and metadata
  */
-export async function processSQLQuestion(question) {
+export async function processSQLQuestion(question, history = []) {
   try {
+    // Build context from history for better SQL generation
+    let contextualQuestion = question;
+    if (history.length > 0) {
+      const recentHistory = history.slice(-4); // Last 2 exchanges (4 messages)
+      const historyContext = recentHistory
+        .map(msg => `${msg.role === 'user' ? 'User' : 'Assistant'}: ${msg.content}`)
+        .join('\n');
+      contextualQuestion = `Previous conversation:\n${historyContext}\n\nCurrent question: ${question}`;
+    }
+
     // Generate SQL query
-    const sqlQuery = await generateSQLQuery(question);
+    const sqlQuery = await generateSQLQuery(contextualQuestion);
     console.log('Generated SQL:', sqlQuery);
 
     // Execute query
     const results = await executeSQLQuery(sqlQuery);
     console.log('Query results:', results?.length || 0, 'rows');
 
-    // Format results
-    const answer = await formatSQLResults(question, results);
+    // Format results with history context
+    const answer = await formatSQLResults(question, results, history);
 
     return {
       answer,

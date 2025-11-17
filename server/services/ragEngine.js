@@ -31,9 +31,10 @@ export function shouldUseRAG(question) {
 /**
  * Process a question using RAG approach
  * @param {string} question - User question
+ * @param {Array} history - Conversation history
  * @returns {Promise<Object>} - Response with answer and sources
  */
-export async function processRAGQuestion(question) {
+export async function processRAGQuestion(question, history = []) {
   try {
     // Generate embedding for the question
     console.log('Generating embedding for question...');
@@ -63,8 +64,8 @@ export async function processRAGQuestion(question) {
     // Format context from relevant alerts
     const context = formatAlertsContext(relevantAlerts);
 
-    // Generate answer using GPT-4o-mini
-    const answer = await generateRAGAnswer(question, context, relevantAlerts);
+    // Generate answer using GPT-4o-mini with conversation history
+    const answer = await generateRAGAnswer(question, context, relevantAlerts, history);
 
     return {
       answer,
@@ -116,9 +117,10 @@ function formatAlertsContext(alerts) {
  * @param {string} question - User question
  * @param {string} context - Formatted context from alerts
  * @param {Array} alerts - Relevant alerts
+ * @param {Array} history - Conversation history
  * @returns {Promise<string>} - Generated answer
  */
-async function generateRAGAnswer(question, context, alerts) {
+async function generateRAGAnswer(question, context, alerts, history = []) {
   const messages = [
     {
       role: 'system',
@@ -126,10 +128,11 @@ async function generateRAGAnswer(question, context, alerts) {
 
 Your task is to:
 1. Analyze the provided network monitoring alerts
-2. Answer the user's question based on the context
+2. Answer the user's question based on the context and conversation history
 3. Identify patterns, trends, or issues
 4. Provide actionable insights and recommendations
 5. Reference specific alerts when making points
+6. Maintain context from previous questions in the conversation
 
 Guidelines:
 - Be concise but thorough
@@ -137,17 +140,31 @@ Guidelines:
 - Provide specific examples from the alerts
 - If you see patterns, mention them
 - Give practical recommendations
+- Remember previous questions and build upon them
 - If the question cannot be fully answered from the context, say so`,
     },
-    {
-      role: 'user',
-      content: `${context}
+  ];
+
+  // Add conversation history (last 6 messages = 3 exchanges)
+  if (history.length > 0) {
+    const recentHistory = history.slice(-6);
+    recentHistory.forEach(msg => {
+      messages.push({
+        role: msg.role,
+        content: msg.content,
+      });
+    });
+  }
+
+  // Add current question with context
+  messages.push({
+    role: 'user',
+    content: `${context}
 
 Question: ${question}
 
 Please analyze the alerts above and provide a detailed answer.`,
-    },
-  ];
+  });
 
   try {
     const answer = await generateChatCompletion(messages, {

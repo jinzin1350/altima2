@@ -29,10 +29,19 @@ function ChatBox() {
     setLoading(true);
 
     try {
+      // Get conversation history (last 40 messages = 20 questions)
+      const conversationHistory = messages.slice(-40).map(msg => ({
+        role: msg.role,
+        content: msg.content,
+      }));
+
       const response = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: messageText }),
+        body: JSON.stringify({
+          message: messageText,
+          history: conversationHistory,
+        }),
       });
 
       const data = await response.json();

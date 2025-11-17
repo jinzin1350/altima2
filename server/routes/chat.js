@@ -9,27 +9,28 @@ const router = express.Router();
  */
 router.post('/', async (req, res) => {
   try {
-    const { message } = req.body;
+    const { message, history = [] } = req.body;
 
     if (!message || typeof message !== 'string') {
       return res.status(400).json({ error: 'Message is required' });
     }
 
     console.log('Processing question:', message);
+    console.log('Conversation history length:', history.length);
 
     let response;
 
     // Determine which approach to use
     if (shouldUseSQL(message)) {
       console.log('Using SQL approach');
-      response = await processSQLQuestion(message);
+      response = await processSQLQuestion(message, history);
     } else if (shouldUseRAG(message)) {
       console.log('Using RAG approach');
-      response = await processRAGQuestion(message);
+      response = await processRAGQuestion(message, history);
     } else {
       // Default to SQL for general queries
       console.log('Using SQL approach (default)');
-      response = await processSQLQuestion(message);
+      response = await processSQLQuestion(message, history);
     }
 
     res.json({
